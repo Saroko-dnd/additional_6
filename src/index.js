@@ -1,20 +1,25 @@
 module.exports = function zeros(expression) {
   const expressionArray = expression.match(/[0-9]+!+/g);
-  const oddFactorialsAddZeros = false;
+  const oddFactorialCanHaveZeros = !!expressionArray.find(searchForFactorOfTwo);
 
-  return expressionArray.reduce((result, nextFactorial) => {return result + getAmountOfZeros(nextFactorial)}, 0);
+  return expressionArray.reduce((result, nextFactorial) => {return result + getAmountOfZeros(nextFactorial, oddFactorialCanHaveZeros)}, 0);
 }
 
-function getAmountOfZeros(factorial){
+function getAmountOfZeros(factorial, oddFactorialCanHaveZeros){
   const number = parseInt(factorial, 10);
   const double = factorial.endsWith('!!');
   let result = 0;
   let power = 1;
 
   if (double){//for !!
-    if (number % 2 === 0){//for good !!
+    if (number % 2 === 0){//for even !!
       do{
         result += Math.floor(Math.floor(number/Math.pow(5, power))/2);
+        ++power;
+      }while(Math.pow(5, power) <= number);
+    }else if (oddFactorialCanHaveZeros && number >= 5){//for odd !!
+      do{
+        result += Math.ceil(Math.floor(number/Math.pow(5, power))/2);
         ++power;
       }while(Math.pow(5, power) <= number);
     }
@@ -28,12 +33,18 @@ function getAmountOfZeros(factorial){
   return result;
 }
 
-/*function searchForFactorOfTwo(factorial){
+function searchForFactorOfTwo(factorial){
   const number = parseInt(factorial, 10);
-  if (number > 1){
 
+  if (number > 1){
+    if(!factorial.endsWith('!!')){
+      return true;
+    }else if (number % 2 === 0) {
+      return true;
+    }  
   }
 
-}*/
+  return false;
+}
 
 
