@@ -1,23 +1,40 @@
 module.exports = function zeros(expression) {
   const expressionArray = expression.match(/[0-9]+!+/g);
-  const oddFactorialCanHaveZeros = !!expressionArray.find(searchForFactorOfTwo);
+  const powersOfFive = expressionArray.reduce((powers, nextFactorial) => {return powers + countPowersOfFive(nextFactorial)}, 0);
+  const powersOfTwo = expressionArray.reduce((powers, nextFactorial) => {return powers + countPowersOfTwo(nextFactorial)}, 0);
 
-  return expressionArray.reduce((result, nextFactorial) => {return result + getAmountOfZeros(nextFactorial, oddFactorialCanHaveZeros)}, 0);
+  return (powersOfFive <= powersOfTwo) ? powersOfFive : powersOfTwo;
 }
 
-function getAmountOfZeros(factorial, oddFactorialCanHaveZeros){
+function countPowersOfTwo(factorial){
   const number = parseInt(factorial, 10);
-  const double = factorial.endsWith('!!');
   let result = 0;
   let power = 1;
 
-  if (double){//for !!
+  if (number > 1){
+    if ((factorial.endsWith('!!') && number % 2 === 0) || !factorial.endsWith('!!')){
+      do{
+        result += Math.floor(number/Math.pow(2, power));
+        ++power;
+      }while(Math.pow(2, power) <= number);
+    }
+  }
+
+  return result;
+}
+
+function countPowersOfFive(factorial){
+  const number = parseInt(factorial, 10);
+  let result = 0;
+  let power = 1;
+
+  if (factorial.endsWith('!!')){//for !!
     if (number % 2 === 0){//for even !!
       do{
         result += Math.floor(Math.floor(number/Math.pow(5, power))/2);
         ++power;
       }while(Math.pow(5, power) <= number);
-    }else if (oddFactorialCanHaveZeros && number >= 5){//for odd !!
+    }else if (number >= 5){//for odd !!
       do{
         result += Math.ceil(Math.floor(number/Math.pow(5, power))/2);
         ++power;
@@ -31,20 +48,6 @@ function getAmountOfZeros(factorial, oddFactorialCanHaveZeros){
   }
 
   return result;
-}
-
-function searchForFactorOfTwo(factorial){
-  const number = parseInt(factorial, 10);
-
-  if (number > 1){
-    if(!factorial.endsWith('!!')){
-      return true;
-    }else if (number % 2 === 0) {
-      return true;
-    }  
-  }
-
-  return false;
 }
 
 
