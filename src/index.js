@@ -1,7 +1,7 @@
 module.exports = function zeros(expression) {
   const expressionArray = expression.match(/[0-9]+!+/g);
   const powersOfFive = expressionArray.reduce((powers, nextFactorial) => {return powers + countPowersOfFive(nextFactorial)}, 0);
-  const powersOfTwo = expressionArray.reduce((powers, nextFactorial) => {return powers + countPowersOfTwo(nextFactorial)}, 0);
+  const powersOfTwo = powersOfFive ? expressionArray.reduce((powers, nextFactorial) => {return powers + countPowersOfTwo(nextFactorial)}, 0) : 0;
 
   return (powersOfFive <= powersOfTwo) ? powersOfFive : powersOfTwo;
 }
